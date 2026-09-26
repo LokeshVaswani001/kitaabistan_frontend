@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Palette taken directly from the blueprint's "Design & Visual Theme"
+   section (Deep Teal #0E5C4C, Night Teal #0B4A3D, Warm Gold #C79A3F,
+   Soft Cream #FAF3E7). --ink/--ink-soft/--panel/--line are implementation
+   details built to sit comfortably alongside that palette. */
+:root {
+  --paper: #faf3e7; /* Soft Cream (exact) */
+  --panel: #fffdf8;
+  --ink: #1d2624;
+  --ink-soft: #6b746f;
+  --line: #e9e0cd;
+  --sage: #0e5c4c; /* Deep Teal (exact) */
+  --sage-deep: #0b4a3d; /* Night Teal (exact) */
+  --sun: #c79a3f; /* Warm Gold (exact) */
+  --danger: #c0503f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Manrope", sans-serif;
+}
+
+/* Headings use a classic serif per the blueprint's typography spec
+   ("a classic serif — Georgia / Noto Naskh for Urdu headings — for a
+   literary, trustworthy feel"), while body copy stays on the clean
+   sans-serif (Manrope) set above for readability. */
+h1,
+h2,
+h3 {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.font-urdu {
+  font-family: "Noto Nastaliq Urdu", serif;
+  direction: rtl;
+}
+
+/* Urdu headings specifically use Noto Naskh (per the blueprint), which
+   reads more like a formal, literary heading face than the flowing
+   Nastaliq style used for Urdu body text below. */
+h1.font-urdu,
+h2.font-urdu,
+h3.font-urdu {
+  font-family: "Noto Naskh Arabic", serif;
+}
+
+/* Dyslexia-friendly reading mode: Lexend is designed to improve reading
+   proficiency, plus extra letter-spacing which helps many dyslexic
+   readers distinguish similar-looking letters. */
+.font-dyslexia {
+  font-family: "Lexend", sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 8px;
+}

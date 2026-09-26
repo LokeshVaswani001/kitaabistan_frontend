@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E5C4C"/>
+      <stop offset="1" stop-color="#0B4A3D"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- open book glyph -->
+  <g transform="translate(96,168)">
+    <path d="M160 26 C120 6 70 0 20 8 L20 224 C70 216 120 222 160 242 C200 222 250 216 300 224 L300 8 C250 0 200 6 160 26 Z"
+          fill="#FAF3E7" opacity="0.98"/>
+    <path d="M160 26 L160 242" stroke="#0B4A3D" stroke-width="6" stroke-linecap="round"/>
+    <path d="M44 46 C78 38 112 40 138 52" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <path d="M44 76 C78 68 112 70 138 82" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <path d="M44 106 C78 98 112 100 138 112" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <path d="M182 52 C208 40 242 38 276 46" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <path d="M182 82 C208 70 242 68 276 76" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <path d="M182 112 C208 100 242 98 276 106" stroke="#0E5C4C" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+  </g>
+  <!-- gold bookmark ribbon accent -->
+  <path d="M356 96 L400 96 L400 188 L378 168 L356 188 Z" fill="#C79A3F"/>
+</svg>

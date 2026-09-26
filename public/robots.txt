@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /saved
+
+Sitemap: https://kitaabistan.app/sitemap.xml
