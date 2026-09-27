@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Library, MessageCircle, Bookmark, User, WifiOff } from "lucide-react";
+import { Home, Library, MessageCircle, Bookmark, User, WifiOff, BookPlus } from "lucide-react";
 import { useAuth, formatRemaining } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 function useTabs(t) {
   return [
     { href: "/home", label: t("navHome"), icon: Home },
     { href: "/library", label: t("navLibrary"), icon: Library },
+    { href: "/import", label: t("navImport"), icon: BookPlus },
     { href: "/chatbot", label: t("navChatbot"), icon: MessageCircle },
     { href: "/saved", label: t("navSaved"), icon: Bookmark },
     { href: "/profile", label: t("navProfile"), icon: User },
@@ -43,7 +45,8 @@ function useOnlineStatus() {
 
 /**
  * Wrap any protected page with <AppShell>. It:
- *  - redirects to "/" if there is no active session (demo or member)
+ *  - starts a guest/demo session when there is none, so no page ever
+ *    bounces the reader to the login screen (accounts are optional)
  *  - shows a live countdown banner while a demo session is active
  *  - shows a calm "you're offline" banner when the device has no
  *    connection, reinforcing that downloaded content still works
@@ -51,20 +54,28 @@ function useOnlineStatus() {
  *  - exposes the Urdu/English toggle everywhere
  */
 export default function AppShell({ children }) {
-  const { ready, isAuthenticated, isDemo, remainingMs } = useAuth();
-  const { t, lang, toggleLang, isUrdu } = useLanguage();
+  const { ready, isAuthenticated, isMember, isDemo, session, remainingMs, startDemo, logout } = useAuth();
+  const { t, isUrdu } = useLanguage();
   const online = useOnlineStatus();
   const router = useRouter();
   const pathname = usePathname();
   const TABS = useTabs(t);
+  const [autoStarted, setAutoStarted] = useState(false);
 
-  const shouldRedirect = ready && !isAuthenticated;
-
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (shouldRedirect) {
-      router.replace("/login?reason=session");
-    }
-  }, [shouldRedirect, router]);
+    if (!ready || isAuthenticated || autoStarted) return;
+    setAutoStarted(true);
+    startDemo(60).then((res) => {
+      if (!res.ok) router.replace("/login?reason=session");
+    });
+  }, [ready, isAuthenticated, autoStarted, startDemo, router]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/login");
+  };
 
   if (!ready || !isAuthenticated) {
     return (
@@ -132,50 +143,61 @@ export default function AppShell({ children }) {
           {t("appName")}
         </Link>
 
-        <nav className="hidden md:flex gap-8 text-sm font-semibold text-[var(--ink-soft)]">
-          {TABS.slice(0, 3).map((tab) => (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={pathname.startsWith(tab.href.split("?")[0]) ? "text-[var(--ink)]" : ""}
-            >
-              {tab.label}
-            </Link>
-          ))}
+        <nav className="hidden md:flex gap-6 lg:gap-8 text-sm font-semibold text-[var(--ink-soft)]">
+          {TABS.slice(0, 5).map((tab) => {
+            const active = pathname.startsWith(tab.href.split("?")[0]);
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className={`relative transition-colors ${active ? "text-[var(--ink)]" : "hover:text-[var(--ink)]"}`}
+              >
+                {tab.label}
+                {active && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full bg-[var(--brand)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <motion.button
-            whileTap={{ scale: 0.93 }}
-            onClick={toggleLang}
-            className="flex bg-[var(--panel)] border border-[var(--line)] rounded-full p-1 text-xs font-bold"
-            aria-label="Toggle language"
-          >
-            <span
-              className="px-3 py-1.5 rounded-full transition-colors"
-              style={{
-                background: lang === "en" ? "var(--ink)" : "transparent",
-                color: lang === "en" ? "#fff" : "var(--ink-soft)",
-              }}
-            >
-              EN
-            </span>
-            <span
-              className="px-3 py-1.5 rounded-full font-urdu transition-colors"
-              style={{
-                background: lang === "ur" ? "var(--ink)" : "transparent",
-                color: lang === "ur" ? "#fff" : "var(--ink-soft)",
-              }}
-            >
-              اردو
-            </span>
-          </motion.button>
+        <div className="flex items-center gap-2 md:gap-3">
+          <LanguageSwitcher />
           <Link
             href="/profile"
-            className="hidden md:inline-block text-xs font-bold border border-[var(--line)] rounded-full px-4 py-2"
+            className="hidden md:inline-block max-w-[9rem] truncate text-xs font-bold border border-[var(--line)] rounded-full px-4 py-2 hover:border-[var(--brand)] transition-colors"
+            title={session?.name}
           >
-            {t("navProfile")}
+            {isMember && session?.name ? session.name : t("navProfile")}
           </Link>
+          {isMember ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="hidden md:inline-flex items-center text-xs font-bold bg-[var(--ink)] text-[var(--paper)] rounded-full px-4 py-2 hover:opacity-90 transition-opacity"
+            >
+              {t("logout")}
+            </button>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden md:inline-block text-xs font-bold border border-[var(--line)] rounded-full px-4 py-2 hover:border-[var(--brand)] transition-colors"
+              >
+                {t("login")}
+              </Link>
+              <Link
+                href="/signup"
+                className="hidden md:inline-block text-xs font-bold bg-[var(--brand)] text-[var(--on-brand)] rounded-full px-4 py-2 hover:opacity-90 transition-opacity"
+              >
+                {t("signup")}
+              </Link>
+            </>
+          )}
         </div>
       </header>
 

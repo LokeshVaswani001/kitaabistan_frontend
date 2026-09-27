@@ -22,7 +22,16 @@ export default function BookCard({ book }) {
       className="relative bg-[var(--panel)] border border-[var(--line)] rounded-2xl hover:border-[var(--sage)] transition-colors"
     >
       <Link href={`/book/${book.id}`} className="flex gap-3 p-3">
-        <div className="w-12 h-16 rounded-lg bg-gradient-to-br from-[var(--sage)] to-[var(--sage-deep)] shrink-0" />
+        {book.cover ? (
+          <img
+            src={`/${book.cover}`}
+            alt=""
+            loading="lazy"
+            className="w-12 h-16 rounded-lg object-cover shrink-0 border border-[var(--line)] bg-[var(--paper)]"
+          />
+        ) : (
+          <div className="w-12 h-16 rounded-lg bg-gradient-to-br from-[var(--sage)] to-[var(--sage-deep)] shrink-0" />
+        )}
         <div className="min-w-0 flex-1">
           <div className="font-bold text-sm leading-snug truncate pr-6 flex items-center gap-1.5">
             {book.title}
@@ -33,7 +42,7 @@ export default function BookCard({ book }) {
             )}
           </div>
           {book.urduTitle && (
-            <div className="font-urdu text-sm text-[var(--sage-deep)] mt-0.5">
+              <div className="font-urdu text-sm text-[var(--sage-deep)] mt-0.5">
               {book.urduTitle}
             </div>
           )}
@@ -42,7 +51,7 @@ export default function BookCard({ book }) {
             {requiresDownload && (
               <span
                 className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold"
-                style={{ color: downloaded ? "var(--sage-deep)" : "var(--ink-soft)" }}
+                  style={{ color: downloaded ? "var(--sage-deep)" : "var(--ink-soft)" }}
               >
                 {downloaded ? (
                   <>· {book.sizeMb} MB offline</>

@@ -154,7 +154,13 @@ export default function HomePage() {
                     href={`/book/${p.id}`}
                     className="block w-28 shrink-0 bg-[var(--panel)] border border-[var(--line)] rounded-xl p-2"
                   >
-                    <div className="h-28 rounded-lg bg-[var(--line)]" />
+                    {p.cover ? (
+                      <div className="h-28 rounded-lg overflow-hidden bg-[var(--line)]">
+                        <img src={`/${p.cover}`} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-28 rounded-lg bg-[var(--line)]" />
+                    )}
                     <div className="text-xs font-bold mt-2 leading-snug">{p.title}</div>
                     <div className="text-[11px] text-[var(--ink-soft)]">{p.author}</div>
                   </Link>

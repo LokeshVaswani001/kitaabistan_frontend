@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import { findBook, needsDownload } from "@/lib/booksData";
+import { getImportedBook } from "@/lib/importedBooks";
 import { useBookmarks } from "@/context/BookmarksContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useProgress } from "@/context/ProgressContext";
@@ -30,27 +31,70 @@ import { useDownloads } from "@/context/DownloadsContext";
 // for each book via the admin panel described in the product blueprint.
 // Structured as pages (arrays of paragraphs) so the reading screen can
 // show and turn through actual book pages instead of one long scroll.
-const PLACEHOLDER_PAGES = [
-  [
-    "This is placeholder reading content. Replace this text with the real, rights-cleared book content added through the admin panel described in the product blueprint.",
-  ],
-  [
-    "The reading screen turns through real pages, one at a time — matching how a printed book is actually read, rather than one long scroll.",
-  ],
-  [
-    "Font size, dark mode, bookmarking, and read-aloud all apply per page, so the reading experience stays distraction-free no matter which page a reader is on.",
-  ],
-  [
-    "Once real content is wired in, each of these placeholder pages will be replaced by an actual page of the book, sized to fit comfortably on screen.",
-  ],
-  [
-    "End of this preview. The rest of this book will be unlocked once its full, rights-cleared content is added to the library.",
-  ],
-];
+const PLACEHOLDER_PAGES = [["phPage1"], ["phPage2"], ["phPage3"], ["phPage4"], ["phEndNote"]];
+
+function splitBookText(raw) {
+  let text = raw.replace(/\r\n?/g, "\n");
+  const startMatch = text.match(/\*{3}\s*START OF (THE|THIS) PROJECT GUTENBERG EBOOK[^\n]*/i);
+  const endMatch = text.match(/\*{3}\s*END OF (THE|THIS) PROJECT GUTENBERG EBOOK/i);
+  if (startMatch) {
+    text = text.slice((startMatch.index || 0) + startMatch[0].length);
+  }
+  if (endMatch && endMatch.index) {
+    text = text.slice(0, text.indexOf(endMatch[0]));
+  }
+
+  let blocks = text
+    .split(/\n\s*\n/)
+    .map((b) => b.replace(/\[Illustration[^\]]*\]/g, "").trim())
+    .filter(Boolean);
+  if (blocks.length < 6) {
+    blocks = text
+      .split("\n")
+      .map((b) => b.trim())
+      .filter(Boolean);
+  }
+
+  const cleaned = [];
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i].replace(/_([^_\n]+)_/g, "$1");
+    if (/^contents$/i.test(block)) {
+      const next = blocks[i + 1] || "";
+      if ((next.match(/CHAPTER/gi) || []).length >= 3) i++;
+      continue;
+    }
+    if ((block.match(/CHAPTER/gi) || []).length >= 6 && /^contents$/i.test(blocks[i - 1] || "")) {
+      continue;
+    }
+    cleaned.push(block);
+  }
+
+  const pages = [];
+  let current = [];
+  let length = 0;
+  for (const block of cleaned) {
+    current.push(block);
+    length += block.length;
+    if (length > 2400) {
+      pages.push(current);
+      current = [];
+      length = 0;
+    }
+  }
+  if (current.length) pages.push(current);
+  return pages.length ? pages : [[text.trim()]];
+}
 
 export default function BookPage({ params }) {
   const { id } = use(params);
-  const book = findBook(id);
+  const catalogBook = useMemo(() => findBook(id), [id]);
+  const [importedById, setImportedById] = useState({});
+  const importedRec = catalogBook ? null : importedById[id] ?? null;
+  const stillLooking = !catalogBook && !(id in importedById);
+  const book = useMemo(
+    () => catalogBook || (importedRec ? { ...importedRec, file: `imported:${id}` } : null),
+    [catalogBook, importedRec, id]
+  );
   const [fontSize, setFontSize] = useState(17);
   const [lineSpacing, setLineSpacing] = useState(1.75);
   const [dyslexiaFont, setDyslexiaFont] = useState(false);
@@ -64,6 +108,48 @@ export default function BookPage({ params }) {
   const { logBookOpened } = useStreak();
   const { isDownloaded, isDownloading, getProgress: getDownloadProgress, startDownload } =
     useDownloads();
+  const [fileState, setFileState] = useState({ file: null, pages: null });
+  const filePages =
+    book?.file && fileState.file === book.file ? fileState.pages : null;
+
+  useEffect(() => {
+    if (catalogBook) return undefined;
+    let cancelled = false;
+    getImportedBook(id)
+      .then((rec) => {
+        if (!cancelled) setImportedById((prev) => ({ ...prev, [id]: rec }));
+      })
+      .catch(() => {
+        if (!cancelled) setImportedById((prev) => ({ ...prev, [id]: null }));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, catalogBook]);
+
+  useEffect(() => {
+    if (!importedRec) return;
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setFileState({ file: `imported:${id}`, pages: splitBookText(importedRec.text) });
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [importedRec, id]);
+
+  useEffect(() => {
+    if (!book?.file || String(book.file).startsWith("imported:")) return undefined;
+    let cancelled = false;
+    const file = book.file;
+    fetch(`/${file}`)
+      .then((res) => (res.ok ? res.text() : Promise.reject(new Error("load failed"))))
+      .then((text) => {
+        if (!cancelled) setFileState({ file, pages: splitBookText(text) });
+      })
+      .catch(() => {
+        if (!cancelled) setFileState({ file, pages: [] });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [book?.file]);
 
   // NOTE: every hook below is called unconditionally on every render —
   // the "book not found" case is handled with in-hook guards, then a
@@ -85,7 +171,13 @@ export default function BookPage({ params }) {
   }, []);
 
   const isBilingualPoem = !!book && Array.isArray(book.linesEn) && Array.isArray(book.linesUr);
-  const totalPages = book ? (isBilingualPoem ? 1 : PLACEHOLDER_PAGES.length) : 0;
+  const totalPages = !book
+    ? 0
+    : isBilingualPoem
+      ? 1
+      : book.file && filePages
+        ? filePages.length
+        : PLACEHOLDER_PAGES.length;
 
   // Keep progress in sync with the current page whenever it changes, and
   // stop any read-aloud in progress (an external-system side effect, not
@@ -114,12 +206,46 @@ export default function BookPage({ params }) {
     setPageIndex((p) => p - 1);
   };
 
-  const currentPageParagraphs = useMemo(
-    () => (!book || isBilingualPoem ? [] : PLACEHOLDER_PAGES[pageIndex] || []),
-    [pageIndex, isBilingualPoem, book]
-  );
+  const currentPageParagraphs = useMemo(() => {
+    if (!book || isBilingualPoem) return [];
+    if (book.file) return filePages?.[pageIndex] || [];
+    return (PLACEHOLDER_PAGES[pageIndex] || []).map((key) => t(key));
+  }, [pageIndex, isBilingualPoem, book, filePages, t]);
 
-  if (!book) return notFound();
+  if (!book) {
+    if (stillLooking) {
+      return (
+        <AppShell>
+          <div className="max-w-2xl mx-auto px-5 md:px-10 pt-8">
+            <div className="h-5 w-40 skeleton rounded" />
+            <div className="h-7 w-2/3 skeleton rounded mt-6" />
+            <div className="mt-8 space-y-4">
+              {[94, 88, 96, 70, 92, 84, 60].map((w, i) => (
+                <div key={i} className="h-4 skeleton rounded" style={{ width: `${w}%` }} />
+              ))}
+            </div>
+          </div>
+        </AppShell>
+      );
+    }
+    return notFound();
+  }
+
+  if (book.file && filePages === null) {
+    return (
+      <AppShell>
+        <div className="max-w-2xl mx-auto px-5 md:px-10 pt-8">
+          <div className="h-5 w-40 skeleton rounded" />
+          <div className="h-7 w-2/3 skeleton rounded mt-6" />
+          <div className="mt-8 space-y-4">
+            {[94, 88, 96, 70, 92, 84, 60].map((w, i) => (
+              <div key={i} className="h-4 skeleton rounded" style={{ width: `${w}%` }} />
+            ))}
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   const saved = isBookmarked(book.id);
   const requiresDownload = needsDownload(book);
@@ -191,7 +317,7 @@ export default function BookPage({ params }) {
     window.speechSynthesis.cancel();
     const text = isBilingualPoem
       ? (isUrdu ? book.linesUr : book.linesEn).join(". ")
-      : currentPageParagraphs.join(" ");
+      : currentPageParagraphs.map((p) => p.replace(/^#{1,6}\s*/, "")).join(" ");
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = isUrdu ? "ur-PK" : "en-US";
     utter.onend = () => setSpeaking(false);
@@ -224,11 +350,11 @@ export default function BookPage({ params }) {
         className="max-w-2xl mx-auto px-5 md:px-10 pt-6 md:pt-10 pb-6 rounded-3xl"
       >
         <Link
-          href={`/library/${book.category.slug}`}
+          href={book.category ? `/library/${book.category.slug}` : "/import"}
           className="text-sm font-semibold"
           style={{ color: dark ? "#A9C2B8" : "var(--ink-soft)" }}
         >
-          ← {book.category.name}
+          ← {book.category ? book.category.name : isUrdu ? "محفوظ کتابیں" : "My books"}
         </Link>
 
         <h1 className="text-2xl font-extrabold mt-4">{book.title}</h1>
@@ -386,18 +512,35 @@ export default function BookPage({ params }) {
                 </div>
               ) : (
                 <div
-                  className={`space-y-5 ${dyslexiaFont ? "font-dyslexia" : ""}`}
+                  className={`space-y-5 ${dyslexiaFont ? "font-dyslexia" : ""} ${
+                    book.urdu ? "font-urdu text-right" : ""
+                  }`}
+                  dir={book.urdu ? "rtl" : "ltr"}
                   style={{ fontSize: `${fontSize}px`, lineHeight: lineSpacing }}
                 >
-                  {currentPageParagraphs.map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
+                  {currentPageParagraphs.map((p, i) =>
+                    p.startsWith("#") ? (
+                      <h3
+                        key={i}
+                        className={`font-bold tracking-tight ${
+                          book.urdu ? "font-urdu" : "font-display"
+                        }`}
+                        style={{ fontSize: `${fontSize + 5}px`, lineHeight: lineSpacing }}
+                      >
+                        {p.replace(/^#{1,6}\s*/, "")}
+                      </h3>
+                    ) : (
+                      <p key={i}>{p}</p>
+                    )
+                  )}
                   {pageIndex === totalPages - 1 && (
                     <div
                       className="text-xs font-bold uppercase tracking-wide text-center pt-4"
                       style={{ color: dark ? "#8FA89D" : "var(--ink-soft)" }}
                     >
-                      {t("endOfPreview")}
+                      {book.file
+                        ? `${isUrdu ? "کتاب مکمل" : "End of book"} · ${book.source} · ${book.license}`
+                        : t("endOfPreview")}
                     </div>
                   )}
                 </div>

@@ -10,15 +10,29 @@ const DEFAULT_PROFILE = () => ({
   name: "Me",
   ageBand: "all", // "child" (8-12) | "teen" (13-18) | "all" (adult/unspecified)
   kidsMode: false,
-  color: "#6E8E80",
+  color: "#5A7A6E",
 });
+
+/* Earlier avatar colours were too light to carry a white initial (below
+   4.5:1). Saved profiles are mapped onto the darker replacements. */
+const LEGACY_COLORS = {
+  "#6E8E80": "#5A7A6E",
+  "#C79A3B": "#8F6A1F",
+  "#8B6FC9": "#7A5EB8",
+  "#4FB0C6": "#2F7E91",
+  "#F17456": "#B84A33",
+};
+
+function normalize(list) {
+  return list.map((p) => (p && LEGACY_COLORS[p.color] ? { ...p, color: LEGACY_COLORS[p.color] } : p));
+}
 
 function readProfiles() {
   if (typeof window === "undefined") return [DEFAULT_PROFILE()];
   try {
     const raw = window.localStorage.getItem(PROFILES_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
-    return parsed && parsed.length ? parsed : [DEFAULT_PROFILE()];
+    return normalize(parsed && parsed.length ? parsed : [DEFAULT_PROFILE()]);
   } catch {
     return [DEFAULT_PROFILE()];
   }

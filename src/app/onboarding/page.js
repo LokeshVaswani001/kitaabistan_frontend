@@ -16,7 +16,7 @@ export default function OnboardingPage() {
   const [showDownload, setShowDownload] = useState(false);
   const [profileName, setProfileName] = useState("");
   const [ageBand, setAgeBand] = useState("all");
-  const { lang, setLang, t, isUrdu } = useLanguage();
+  const { lang, setLang, t, isUrdu, languages } = useLanguage();
   const { updateProfile } = useProfiles();
   const router = useRouter();
 
@@ -67,26 +67,27 @@ export default function OnboardingPage() {
               <div className="w-16 h-16 rounded-2xl bg-[var(--sun)] mx-auto flex items-center justify-center mb-6">
                 <Globe size={28} color="#26210A" />
               </div>
-              <h1 className="text-2xl font-extrabold">Choose your language</h1>
-              <p className="text-sm text-[var(--ink-soft)] mt-2 font-urdu">
-                اپنی زبان منتخب کریں
+              <h1 className={`text-2xl font-extrabold ${isUrdu ? "font-urdu" : ""}`}>
+                {t("obLangTitle")}
+              </h1>
+              <p className={`text-sm text-[var(--ink-soft)] mt-2 ${isUrdu ? "font-urdu" : ""}`}>
+                {t("obLangSub")}
               </p>
 
-              <div className="mt-8 grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setLang("en")}
-                  className="rounded-2xl border-2 p-5 font-bold"
-                  style={{ borderColor: lang === "en" ? "var(--ink)" : "var(--line)" }}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => setLang("ur")}
-                  className="rounded-2xl border-2 p-5 font-bold font-urdu"
-                  style={{ borderColor: lang === "ur" ? "var(--ink)" : "var(--line)" }}
-                >
-                  اردو
-                </button>
+              <div className="mt-6 grid grid-cols-3 gap-2 max-h-[38vh] overflow-y-auto pr-1">
+                {languages.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => setLang(l.code)}
+                    className="rounded-2xl border-2 px-2 py-3 text-xs font-bold"
+                    style={{
+                      borderColor: lang === l.code ? "var(--ink)" : "var(--line)",
+                      background: lang === l.code ? "var(--panel)" : "transparent",
+                    }}
+                  >
+                    {l.native}
+                  </button>
+                ))}
               </div>
             </motion.div>
           )}
@@ -103,12 +104,10 @@ export default function OnboardingPage() {
                 <BookOpen size={28} color="#1D2624" />
               </div>
               <h1 className={`text-2xl font-extrabold ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu ? "آٹھ شیلفیں، ایک جگہ" : "Eight shelves, one place"}
+                {t("obShelfTitle")}
               </h1>
               <p className={`text-sm text-[var(--ink-soft)] mt-2 ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu
-                  ? "ناول، اسلامی کتب، بچوں کی کہانیاں، نظمیں اور مزید — سب ایک ہی لائبریری میں۔"
-                  : "Novels, Islamic books, children's stories, poems, and more — all organized into one simple library."}
+                {t("obShelfBody")}
               </p>
               <div className="mt-8 grid grid-cols-4 gap-2">
                 {["#DDEAE4", "#E4DEF2", "#FBE0E0", "#DCEAE6", "#F5E9C8", "#DDEAF2", "#F6E4D3", "#FBE3D8"].map(
@@ -139,19 +138,17 @@ export default function OnboardingPage() {
                 <MessageCircle size={28} color="#fff" />
               </div>
               <h1 className={`text-2xl font-extrabold ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu ? "رہنما سے پوچھیں" : "Meet Rehnuma"}
+                {t("obBotTitle")}
               </h1>
               <p className={`text-sm text-[var(--ink-soft)] mt-2 ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu
-                  ? "ایک محفوظ چیٹ بوٹ جو صرف منظور شدہ کتابوں سے جواب دیتا ہے — بغیر انٹرنیٹ کے بھی۔"
-                  : "A safe chatbot that only answers from approved books — works with zero internet."}
+                {t("obBotBody")}
               </p>
               <div className="mt-8 space-y-2 text-left">
                 <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl px-4 py-3 text-sm max-w-[80%]">
-                  {isUrdu ? "چیونٹی کی کہانی کا سبق کیا ہے؟" : "What's the moral of the ant story?"}
+                  {t("obBotQ")}
                 </div>
-                <div className="bg-[var(--ink)] text-white rounded-xl px-4 py-3 text-sm max-w-[80%] ml-auto">
-                  {isUrdu ? "مستقبل کے لیے تیاری کریں۔" : "Prepare for the future."}
+                <div className="bg-[var(--ink)] text-[var(--paper)] rounded-xl px-4 py-3 text-sm max-w-[80%] ml-auto">
+                  {t("obBotA")}
                 </div>
               </div>
             </motion.div>
@@ -169,28 +166,26 @@ export default function OnboardingPage() {
                 <UserRound size={28} color="#1D2624" />
               </div>
               <h1 className={`text-2xl font-extrabold ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu ? "اپنی شیلف بنائیں (اختیاری)" : "Personalize your shelf (optional)"}
+                {t("obNameTitle")}
               </h1>
               <p className={`text-sm text-[var(--ink-soft)] mt-2 ${isUrdu ? "font-urdu" : ""}`}>
-                {isUrdu
-                  ? "کوئی ذاتی معلومات درکار نہیں — یہ صرف مواد کو آپ کے لیے موزوں بنانے کے لیے ہے۔"
-                  : "No personal data required — this just personalizes your shelves and reading level."}
+                {t("obNameBody")}
               </p>
 
               <div className="mt-6 text-left">
                 <input
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
-                  placeholder={isUrdu ? "نام (اختیاری)" : "Your name (optional)"}
+                  placeholder={t("obNamePlaceholder")}
                   className={`w-full border-2 border-[var(--line)] rounded-2xl px-4 py-3.5 text-sm ${
                     isUrdu ? "font-urdu text-right" : ""
                   }`}
                 />
                 <div className="grid grid-cols-3 gap-2 mt-3">
                   {[
-                    { id: "child", en: "Child (8–12)", ur: "بچہ (8–12)" },
-                    { id: "teen", en: "Teen (13–18)", ur: "نوجوان (13–18)" },
-                    { id: "all", en: "Adult", ur: "بالغ" },
+                    { id: "child", key: "obBandChild" },
+                    { id: "teen", key: "obBandTeen" },
+                    { id: "all", key: "obBandAdult" },
                   ].map((band) => (
                     <motion.button
                       type="button"
@@ -203,7 +198,7 @@ export default function OnboardingPage() {
                         background: ageBand === band.id ? "var(--panel)" : "transparent",
                       }}
                     >
-                      {isUrdu ? band.ur : band.en}
+                      {t(band.key)}
                     </motion.button>
                   ))}
                 </div>
@@ -215,13 +210,13 @@ export default function OnboardingPage() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => (step < STEP_COUNT - 1 ? setStep((s) => s + 1) : finish())}
-          className="mt-10 w-full py-4 rounded-xl bg-[var(--ink)] text-white font-bold flex items-center justify-center gap-2"
+          className="mt-10 w-full py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-bold flex items-center justify-center gap-2"
         >
           {step < STEP_COUNT - 1 ? (
-            isUrdu ? "اگلا" : "Next"
+            t("obNext")
           ) : (
             <>
-              <Check size={18} /> {isUrdu ? "شروع کریں" : "Get started"}
+              <Check size={18} /> {t("obStart")}
             </>
           )}
         </motion.button>
@@ -230,7 +225,7 @@ export default function OnboardingPage() {
           onClick={finish}
           className="mt-4 w-full text-center text-xs font-semibold text-[var(--ink-soft)]"
         >
-          {isUrdu ? "چھوڑ دیں" : "Skip"}
+          {t("obSkip")}
         </button>
       </div>
 

@@ -28,7 +28,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/home"
-          className="inline-block mt-6 px-6 py-3 rounded-xl bg-[var(--ink)] text-white font-bold text-sm"
+          className="inline-block mt-6 px-6 py-3 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-bold text-sm"
         >
           {isUrdu ? "ہوم پر واپس جائیں" : "Back to your shelf"}
         </Link>

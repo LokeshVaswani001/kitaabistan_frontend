@@ -3,147 +3,142 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /**
- * Frontend-only auth/demo layer.
+ * Auth state backed by real API routes + an httpOnly session cookie.
  *
- * NOTE: This stores a "registered users" list and the current session in
- * localStorage purely so the frontend is fully demonstrable without a
- * backend. When a real backend/API is ready, replace the functions below
- * (signup/login/logout/startDemo) with real API calls and keep the same
- * context shape so components don't need to change.
+ * The context shape is intentionally identical to the old localStorage
+ * implementation, so every page that already consumes `useAuth()` keeps
+ * working unchanged.
  *
- * Session shape stored under SESSION_KEY:
- *   { type: "demo", expiresAt: <timestamp ms> }
- *   { type: "member", name, email }
+ *   session: { type: "member", id, name, email }
+ *          | { type: "demo", expiresAt, durationMinutes }
+ *          | null
  */
-
-const SESSION_KEY = "kitaabistan_session";
-const USERS_KEY = "kitaabistan_users"; // fake local "database" of signed-up users
 
 const AuthContext = createContext(null);
 
-function readSession() {
-  if (typeof window === "undefined") return null;
+async function callApi(path, { method = "GET", body } = {}) {
+  let res;
   try {
-    const raw = window.localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    res = await fetch(path, {
+      method,
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: body ? { "content-type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
   } catch {
-    return null;
+    return { ok: false, status: 0, error: "Network error — please check your connection." };
   }
-}
 
-function writeSession(session) {
-  if (typeof window === "undefined") return;
-  if (session) {
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  } else {
-    window.localStorage.removeItem(SESSION_KEY);
-  }
-}
-
-function readUsers() {
-  if (typeof window === "undefined") return [];
+  let data = null;
   try {
-    const raw = window.localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    data = await res.json();
   } catch {
-    return [];
+    /* non-JSON response */
   }
+
+  if (!res.ok) {
+    return { ok: false, status: res.status, error: data?.error || "Something went wrong." };
+  }
+  return { ok: true, status: res.status, data };
 }
 
-function writeUsers(users) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(USERS_KEY, JSON.stringify(users));
+function toSession(data) {
+  if (!data) return null;
+  if (data.demo) {
+    return { type: "demo", expiresAt: data.demo.expiresAt, durationMinutes: data.demo.durationMinutes };
+  }
+  if (data.user) {
+    return { type: "member", id: data.user.id, name: data.user.name, email: data.user.email };
+  }
+  return null;
 }
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [remainingMs, setRemainingMs] = useState(null);
-  const [demoJustExpired, setDemoJustExpired] = useState(false);
   const [ready, setReady] = useState(false);
+  const [demoRemaining, setDemoRemaining] = useState(null);
+  const [demoJustExpired, setDemoJustExpired] = useState(false);
 
-  // Intentionally loaded post-mount (not via a lazy useState initializer):
-  // "ready" stays false on both the server render and the client's first
-  // paint, so AppShell shows the same "Loading" state on both and only
-  // swaps in the real session client-side, avoiding a hydration mismatch
-  // on the auth-gated screens.
-  /* eslint-disable react-hooks/set-state-in-effect */
+  // Loaded post-mount so server and first client paint agree, keeping the
+  // auth-gated screens hydration-safe. The `then` callback is asynchronous,
+  // which is exactly what React wants from an effect.
   useEffect(() => {
-    setSession(readSession());
-    setReady(true);
+    let cancelled = false;
+    callApi("/api/auth/me").then((res) => {
+      if (cancelled) return;
+      setSession(res.ok ? toSession(res.data) : null);
+      setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Tick the demo countdown. This effect subscribes to an external timer
-  // (setInterval) and resets/updates remainingMs as session changes —
-  // a legitimate effect, not a plain state sync.
+  // Live countdown for timed demo sessions. The tick only ever runs from a
+  // timer callback, so `remainingMs` below is derived rather than synced.
   useEffect(() => {
-    if (!session || session.type !== "demo") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setRemainingMs(null);
-      return;
-    }
+    if (session?.type !== "demo") return;
 
     const tick = () => {
       const ms = session.expiresAt - Date.now();
       if (ms <= 0) {
-        setRemainingMs(0);
+        setDemoRemaining(0);
         setSession(null);
-        writeSession(null);
         setDemoJustExpired(true);
+        callApi("/api/auth/logout", { method: "POST" });
       } else {
-        setRemainingMs(ms);
+        setDemoRemaining(ms);
       }
     };
 
-    tick();
+    const timeout = setTimeout(tick, 0);
     const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, [session]);
 
-  const startDemo = useCallback((minutes) => {
-    const newSession = {
-      type: "demo",
-      expiresAt: Date.now() + minutes * 60 * 1000,
-      durationMinutes: minutes,
-    };
-    writeSession(newSession);
-    setSession(newSession);
-    setDemoJustExpired(false);
-  }, []);
-
-  const signup = useCallback(({ name, email, password }) => {
-    const users = readUsers();
-    if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
-      return { ok: false, error: "An account with this email already exists." };
-    }
-    const newUser = { name, email, password }; // demo only — never store plain passwords in production
-    writeUsers([...users, newUser]);
-    const newSession = { type: "member", name, email };
-    writeSession(newSession);
-    setSession(newSession);
+  const signup = useCallback(async ({ name, email, password }) => {
+    const res = await callApi("/api/auth/signup", {
+      method: "POST",
+      body: { name, email, password },
+    });
+    if (!res.ok) return { ok: false, error: res.error };
+    setSession(toSession(res.data));
     setDemoJustExpired(false);
     return { ok: true };
   }, []);
 
-  const login = useCallback(({ email, password }) => {
-    const users = readUsers();
-    const user = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
-    if (!user) {
-      return { ok: false, error: "Incorrect email or password." };
-    }
-    const newSession = { type: "member", name: user.name, email: user.email };
-    writeSession(newSession);
-    setSession(newSession);
+  const login = useCallback(async ({ email, password }) => {
+    const res = await callApi("/api/auth/login", { method: "POST", body: { email, password } });
+    if (!res.ok) return { ok: false, error: res.error };
+    setSession(toSession(res.data));
     setDemoJustExpired(false);
     return { ok: true };
   }, []);
 
-  const logout = useCallback(() => {
-    writeSession(null);
+  const startDemo = useCallback(async (minutes) => {
+    const res = await callApi("/api/auth/demo", { method: "POST", body: { minutes } });
+    if (!res.ok) return { ok: false, error: res.error };
+    setSession(toSession(res.data));
+    setDemoJustExpired(false);
+    return { ok: true };
+  }, []);
+
+  const logout = useCallback(async () => {
+    await callApi("/api/auth/logout", { method: "POST" });
     setSession(null);
   }, []);
+
+  const refresh = useCallback(async () => {
+    const res = await callApi("/api/auth/me");
+    setSession(res.ok ? toSession(res.data) : null);
+  }, []);
+
+  // Derived, never synced: null unless a demo session is actually running.
+  const remainingMs = session?.type === "demo" ? demoRemaining : null;
 
   const value = useMemo(
     () => ({
@@ -159,8 +154,9 @@ export function AuthProvider({ children }) {
       signup,
       login,
       logout,
+      refresh,
     }),
-    [ready, session, remainingMs, demoJustExpired, startDemo, signup, login, logout]
+    [ready, session, remainingMs, demoJustExpired, startDemo, signup, login, logout, refresh]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,69 +1,515 @@
 @import "tailwindcss";
 
-/* Palette taken directly from the blueprint's "Design & Visual Theme"
-   section (Deep Teal #0E5C4C, Night Teal #0B4A3D, Warm Gold #C79A3F,
-   Soft Cream #FAF3E7). --ink/--ink-soft/--panel/--line are implementation
-   details built to sit comfortably alongside that palette. */
-:root {
-  --paper: #faf3e7; /* Soft Cream (exact) */
-  --panel: #fffdf8;
-  --ink: #1d2624;
-  --ink-soft: #6b746f;
-  --line: #e9e0cd;
-  --sage: #0e5c4c; /* Deep Teal (exact) */
-  --sage-deep: #0b4a3d; /* Night Teal (exact) */
-  --sun: #c79a3f; /* Warm Gold (exact) */
-  --danger: #c0503f;
+/* =========================================================================
+   Kitaabistan design system
+   -------------------------------------------------------------------------
+   Layer 1  @theme        -> Tailwind utility tokens (bg-paper, text-ink...)
+   Layer 2  :root         -> light palette ("Parchment")
+   Layer 3  [data-theme]  -> dark palette ("Midnight"), set on <html>
+   Layer 4  base          -> typography, focus, scrollbar, selection
+   Layer 5  components    -> .btn / .field / .card / .eyebrow ...
+   Layer 6  motion        -> keyframes + utilities
+   ========================================================================= */
+
+/* Dark variant driven by data-theme on <html> (set before paint by the
+   inline script in layout.js, so there is never a flash of wrong theme). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-naskh: "Noto Naskh Arabic", serif;
+  --font-urdu: "Noto Nastaliq Urdu", serif;
+  --font-dyslexia: "Lexend", ui-sans-serif, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(18 33 29 / 0.04), 0 8px 24px -12px rgb(18 33 29 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(18 33 29 / 0.05), 0 20px 40px -18px rgb(18 33 29 / 0.28);
+  --shadow-glow: 0 0 0 1px rgb(11 93 78 / 0.12), 0 18px 50px -24px rgb(11 93 78 / 0.55);
+
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-pulse-soft: pulse-soft 2.6s ease-in-out infinite;
 }
 
+/* ---------------------------------------------------------------- 2. LIGHT */
+:root {
+  --paper: #fcf9f3;
+  --panel: #ffffff;
+  --raised: #ffffff;
+  --ink: #12211d;
+  --ink-soft: #51625d;
+  --line: #eae3d6;
+  --brand: #0b5d4e;
+  --brand-deep: #073a31;
+  --brand-soft: #e4f0ec;
+  --on-brand: #f4fbf9;
+  --accent: #c08a2e;
+  --accent-soft: #f8edd4;
+  --on-accent: #2a2007;
+  --danger: #bb4b3a;
+  --success: #12795f;
+
+  /* Legacy palette tokens used across the app pages (home, library, book,
+     profile, chatbot). Undefined values silently render transparent — that
+     is what made light mode look "missing". */
+  --sun: #f5b301;
+  --sage: #a4c6b3;
+  --sage-deep: #0d5245;
+  /* sage-deep is dark-on-dark in night mode, so text keeps its own token. */
+  --sage-ink: #0d5245;
+
+  color-scheme: light;
+}
+
+/* ----------------------------------------------------------------- 3. DARK */
+/* Deliberately a lifted charcoal-teal rather than near-black: the page still
+   reads as "dark" without swallowing the surfaces, and cards stay clearly
+   separable from the page behind them. */
+[data-theme="dark"] {
+  --paper: #16211f;
+  --panel: #1d2b28;
+  --raised: #243531;
+  --ink: #eef4f2;
+  --ink-soft: #a3b6b0;
+  --line: #2e443f;
+  --brand: #57d4b0;
+  --brand-deep: #11423a;
+  --brand-soft: #1a332d;
+  --on-brand: #041512;
+  --accent: #e6bd6b;
+  --accent-soft: #3a3119;
+  --on-accent: #1a1404;
+  --danger: #f09584;
+  --success: #56dcb3;
+
+  /* Same legacy tokens for dark mode (kept deep enough to carry light text
+     when used as a background, bright enough to read when used as text). */
+  --sun: #f7c531;
+  --sage: #4e8a78;
+  --sage-deep: #1f7360;
+  --sage-ink: #7fc0aa;
+
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------- 4. BASE */
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 html,
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: "Manrope", sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  text-rendering: optimizeLegibility;
 }
 
-/* Headings use a classic serif per the blueprint's typography spec
-   ("a classic serif — Georgia / Noto Naskh for Urdu headings — for a
-   literary, trustworthy feel"), while body copy stays on the clean
-   sans-serif (Manrope) set above for readability. */
+body {
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+/* Literary display serif for English headings; Naskh for Urdu headings
+   (per the product's typography spec). */
 h1,
 h2,
-h3 {
-  font-family: Georgia, "Times New Roman", serif;
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 .font-urdu {
-  font-family: "Noto Nastaliq Urdu", serif;
+  font-family: var(--font-urdu);
   direction: rtl;
 }
 
-/* Urdu headings specifically use Noto Naskh (per the blueprint), which
-   reads more like a formal, literary heading face than the flowing
-   Nastaliq style used for Urdu body text below. */
 h1.font-urdu,
 h2.font-urdu,
-h3.font-urdu {
-  font-family: "Noto Naskh Arabic", serif;
+h3.font-urdu,
+h4.font-urdu {
+  font-family: var(--font-naskh);
+  letter-spacing: 0;
 }
 
-/* Dyslexia-friendly reading mode: Lexend is designed to improve reading
-   proficiency, plus extra letter-spacing which helps many dyslexic
-   readers distinguish similar-looking letters. */
 .font-dyslexia {
-  font-family: "Lexend", sans-serif !important;
+  font-family: var(--font-dyslexia) !important;
   letter-spacing: 0.02em;
 }
 
+::selection {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--line);
-  border-radius: 8px;
+  background: color-mix(in oklab, var(--ink-soft) 34%, transparent);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--ink-soft) 60%, transparent);
+  background-clip: content-box;
+}
+
+/* ---------------------------------------------------------- 5. COMPONENTS */
+
+/* Component classes live in Tailwind's `components` layer so utility
+   classes (bg-*, text-*, p-*) always win. Unlayered rules beat every
+   layer, which is why light-theme overrides on .card/.btn silently lost. */
+@layer components {
+  /* --- buttons ------------------------------------------------------------ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1;
+    border-radius: 0.9rem;
+    padding: 0.875rem 1.5rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition:
+      transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.22s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .btn-primary {
+    background: var(--brand);
+    color: var(--on-brand);
+    box-shadow: 0 10px 26px -14px color-mix(in oklab, var(--brand) 90%, transparent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--brand-deep);
+    box-shadow: 0 16px 34px -14px color-mix(in oklab, var(--brand) 75%, transparent);
+    transform: translateY(-1px);
+  }
+  [data-theme="dark"] .btn-primary:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--brand) 88%, #ffffff);
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 10px 26px -14px color-mix(in oklab, var(--accent) 90%, transparent);
+  }
+  .btn-accent:hover:not(:disabled) {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: var(--panel);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--brand);
+    color: var(--brand);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ink) 7%, transparent);
+    color: var(--ink);
+  }
+
+  .btn-danger {
+    background: color-mix(in oklab, var(--danger) 12%, transparent);
+    color: var(--danger);
+    border-color: color-mix(in oklab, var(--danger) 32%, transparent);
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .btn-sm {
+    padding: 0.55rem 0.95rem;
+    font-size: 0.8125rem;
+    border-radius: 0.7rem;
+  }
+  .btn-lg {
+    padding: 1.05rem 2rem;
+    font-size: 1rem;
+    border-radius: 1rem;
+  }
+  .btn-block {
+    width: 100%;
+  }
+
+  /* --- form fields -------------------------------------------------------- */
+  .field {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease;
+  }
+  .field::placeholder {
+    color: color-mix(in oklab, var(--ink-soft) 70%, transparent);
+    font-weight: 400;
+  }
+  .field:hover {
+    border-color: color-mix(in oklab, var(--brand) 35%, var(--line));
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 16%, transparent);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--danger) 14%, transparent);
+  }
+
+  /* --- surfaces ----------------------------------------------------------- */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-hover {
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in oklab, var(--brand) 40%, var(--line));
+    box-shadow: var(--shadow-lift);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink-soft);
+  }
+  .chip-brand {
+    background: var(--brand-soft);
+    border-color: color-mix(in oklab, var(--brand) 26%, transparent);
+    color: var(--brand);
+  }
+  .chip-accent {
+    background: var(--accent-soft);
+    border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    color: color-mix(in oklab, var(--accent) 82%, var(--ink));
+  }
+
+  /* Tinted full-bleed band used between marketing sections. */
+  .band {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--brand-soft) 70%, transparent),
+        transparent
+      );
+  }
+
+  .gradient-text {
+    background: linear-gradient(100deg, var(--brand) 0%, var(--accent) 92%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Soft radial wash used behind hero / auth artwork. */
+  .aura {
+    position: absolute;
+    inset: auto;
+    pointer-events: none;
+    filter: blur(70px);
+    opacity: 0.55;
+    border-radius: 999px;
+  }
+
+  /* Subtle paper grain so large flat areas do not look plastic. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+  [data-theme="dark"] .grain::after {
+    mix-blend-mode: screen;
+    opacity: 0.22;
+  }
+
+  /* Text input with a leading icon: pad the left side. */
+  .field-with-icon {
+    padding-left: 2.75rem;
+  }
+
+  .rule {
+    height: 1px;
+    background: var(--line);
+    border: 0;
+  }
+
+  /* Hide the horizontal scrollbar on rails without killing scrolling. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------- 6. MOTION */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-1.2deg);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--line) 60%, transparent) 25%,
+    color-mix(in oklab, var(--line) 25%, transparent) 50%,
+    color-mix(in oklab, var(--line) 60%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

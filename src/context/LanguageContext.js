@@ -1,7 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { t as translate } from "@/lib/translations";
+import { LANGUAGES, LANGUAGE_CODES, dirFor, languageFor } from "@/lib/locales";
 
 const LANG_KEY = "kitaabistan_lang";
 const LanguageContext = createContext(null);
@@ -12,36 +13,46 @@ export function LanguageProvider({ children }) {
   // preference is applied a moment later inside useEffect, which only
   // runs on the client after hydration — this avoids a hydration
   // mismatch warning while still restoring the user's choice.
-  const [lang, setLang] = useState("en");
+  const [lang, setLangState] = useState("en");
 
-  // Restoring a saved preference after mount (not during render) is the
-  // standard fix for the hydration-mismatch problem described above.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const stored = window.localStorage.getItem(LANG_KEY);
-    if (stored === "en" || stored === "ur") {
-      setLang(stored);
+    if (stored && LANGUAGE_CODES.has(stored)) {
+      setLangState(stored);
     }
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  // Keep <html lang/dir> in sync so assistive tech and search engines
+  // read the document in the right language and direction.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LANG_KEY, lang);
-      document.documentElement.setAttribute("dir", lang === "ur" ? "rtl" : "ltr");
-      document.documentElement.setAttribute("lang", lang === "ur" ? "ur" : "en");
-    }
+    document.documentElement.setAttribute("dir", dirFor(lang));
+    document.documentElement.setAttribute("lang", lang);
   }, [lang]);
+
+  const setLang = useCallback((next) => {
+    const value = LANGUAGE_CODES.has(next) ? next : "en";
+    setLangState(value);
+    try {
+      window.localStorage.setItem(LANG_KEY, value);
+    } catch {
+      /* storage unavailable — the choice still applies this session */
+    }
+  }, []);
 
   const value = useMemo(
     () => ({
       lang,
       isUrdu: lang === "ur",
-      toggleLang: () => setLang((l) => (l === "en" ? "ur" : "en")),
+      dir: dirFor(lang),
+      language: languageFor(lang),
+      languages: LANGUAGES,
       setLang,
+      toggleLang: () => setLang(lang === "en" ? "ur" : "en"),
       t: (key, vars) => translate(lang, key, vars),
     }),
-    [lang]
+    [lang, setLang]
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

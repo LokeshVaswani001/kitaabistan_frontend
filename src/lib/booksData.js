@@ -1,6 +1,6 @@
-// Sample / placeholder content.
-// Replace with real, rights-cleared content via the admin panel described
-// in the product blueprint (Section 5: Core Content Categories).
+// Real, rights-cleared content only: every entry below is a genuine
+// public-domain book shipped from Project Gutenberg or Wikisource — no
+// placeholder or self-written titles.
 
 // Per the blueprint (Section 5), "Funny / comedy books sit as a light-hearted
 // sub-shelf inside Novels" — it is NOT one of the eight top-level pillars.
@@ -12,8 +12,8 @@ const comedySubShelf = {
   name: "Comedy",
   nameUrdu: "مزاحیہ",
   books: [
-    { id: "c1", title: "Uncle Chaudhry's Chaos", author: "Placeholder Author", bundled: true },
-    { id: "c2", title: "The Great Biryani Heist", author: "Placeholder Author", sizeMb: 3 },
+    { id: "c1", title: "Three Men in a Boat", author: "Jerome K. Jerome", bundled: true, file: "books/three-men-in-a-boat.txt", cover: "covers/three-men-in-a-boat.jpg", source: "Project Gutenberg", license: "Public domain" },
+    { id: "c2", title: "The Importance of Being Earnest", author: "Oscar Wilde", bundled: true, file: "books/importance-of-earnest.txt", cover: "covers/importance-of-earnest.jpg", source: "Project Gutenberg", license: "Public domain" },
   ],
 };
 
@@ -31,9 +31,16 @@ export const categories = [
     kidsSafe: false,
     subShelf: comedySubShelf,
     books: [
-      { id: "n1", title: "The Orchard of Small Miracles", author: "Placeholder Author", progress: 62, bundled: true },
-      { id: "n2", title: "Raat Ki Rani", author: "Placeholder Author", sizeMb: 4 },
-      { id: "n3", title: "Shadows Over Lahore", author: "Placeholder Author", premium: true, sizeMb: 5 },
+      { id: "n1", title: "Dracula", author: "Bram Stoker", bundled: true, file: "books/dracula.txt", cover: "covers/dracula.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n2", title: "Jane Eyre", author: "Charlotte Brontë", bundled: true, file: "books/jane-eyre.txt", cover: "covers/jane-eyre.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n3", title: "The Picture of Dorian Gray", author: "Oscar Wilde", premium: true, bundled: true, file: "books/dorian-gray.txt", cover: "covers/dorian-gray.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n5", title: "Pride and Prejudice", author: "Jane Austen", bundled: true, file: "books/pride-and-prejudice.txt", cover: "covers/pride-and-prejudice.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n6", title: "Frankenstein", author: "Mary Shelley", bundled: true, file: "books/frankenstein.txt", cover: "covers/frankenstein.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n7", title: "Moby-Dick", author: "Herman Melville", bundled: true, file: "books/moby-dick.txt", cover: "covers/moby-dick.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n8", title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", bundled: true, file: "books/sherlock-holmes.txt", cover: "covers/sherlock-holmes.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "n9", title: "Bagh-o-Bahar", urduTitle: "باغ و بہار", author: "Mir Amman Dehlvi", bundled: true, file: "books/bagh-o-bahar.txt", cover: "covers/bagh-o-bahar.jpg", source: "Urdu Wikisource", license: "Public domain", urdu: true },
+      { id: "n10", title: "Fasana-e-Ajaib", urduTitle: "فسانۂ عجائب", author: "Rajab Ali Beg 'Saroor'", bundled: true, file: "books/fasana-e-ajaib.txt", cover: "covers/fasana-e-ajaib.jpg", source: "Urdu Wikisource", license: "Public domain", urdu: true },
+      { id: "n11", title: "Guldasta-e-Zarafat", urduTitle: "گلدستۂ ظرافت", author: "Nishtar Lakhnavi", bundled: true, file: "books/guldasta-zarafat.txt", cover: "covers/guldasta-zarafat.jpg", source: "Urdu Wikisource", license: "Public domain", urdu: true },
     ],
   },
   {
@@ -45,10 +52,9 @@ export const categories = [
     description: "Quran translations, Hadees collections, Seerah, du'as, and Islamic moral stories.",
     descriptionUrdu: "قرآن کے تراجم، احادیث، سیرت، دعائیں اور اسلامی اخلاقی کہانیاں۔",
     books: [
-      { id: "i1", title: "Seerat-un-Nabi (Simplified)", author: "Placeholder Author", bundled: true },
-      { id: "i2", title: "Stories of the Sahaba", author: "Placeholder Author", sizeMb: 3 },
-      { id: "i3", title: "Everyday Du'as for Students", author: "Placeholder Author", bundled: true },
-      { id: "i4", title: "Understanding Salah", author: "Placeholder Author", sizeMb: 4 },
+      { id: "i1", title: "The Koran (Al-Qur'an)", author: "J. M. Rodwell (tr.)", bundled: true, file: "books/quran.txt", cover: "covers/quran.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "i2", title: "The Speeches & Table-Talk of the Prophet Mohammad", author: "Prophet Muhammad", bundled: true, file: "books/speeches-table-talk.txt", cover: "covers/speeches-table-talk.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "i3", title: "Annals of the Early Caliphate", author: "Sir William Muir", bundled: true, file: "books/annals-early-caliphate.txt", cover: "covers/annals-early-caliphate.jpg", source: "Project Gutenberg", license: "Public domain" },
     ],
   },
   {
@@ -60,10 +66,14 @@ export const categories = [
     description: "Short, colorful, easy-to-read stories for young children.",
     descriptionUrdu: "چھوٹے بچوں کے لیے مختصر، رنگین اور آسان کہانیاں۔",
     books: [
-      { id: "k1", title: "The Little Kite That Flew Home", author: "Placeholder Author", bundled: true },
-      { id: "k2", title: "Chunnu Aur Munnu Ki Kahani", author: "Placeholder Author", bundled: true },
-      { id: "k3", title: "The Sparrow's Gift", author: "Placeholder Author", sizeMb: 2 },
-      { id: "k4", title: "Bilal and the Magic Lantern", author: "Placeholder Author", sizeMb: 3 },
+      { id: "k1", title: "The Jungle Book", author: "Rudyard Kipling", bundled: true, file: "books/jungle-book.txt", cover: "covers/jungle-book.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k2", title: "The Adventures of Tom Sawyer", author: "Mark Twain", bundled: true, file: "books/tom-sawyer.txt", cover: "covers/tom-sawyer.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k3", title: "Treasure Island", author: "Robert Louis Stevenson", bundled: true, file: "books/treasure-island.txt", cover: "covers/treasure-island.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k4", title: "Black Beauty", author: "Anna Sewell", bundled: true, file: "books/black-beauty.txt", cover: "covers/black-beauty.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k5", title: "Alice's Adventures in Wonderland", author: "Lewis Carroll", bundled: true, file: "books/alice-in-wonderland.txt", cover: "covers/alice-in-wonderland.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k6", title: "The Wind in the Willows", author: "Kenneth Grahame", bundled: true, file: "books/wind-in-the-willows.txt", cover: "covers/wind-in-the-willows.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k7", title: "The Wonderful Wizard of Oz", author: "L. Frank Baum", bundled: true, file: "books/wizard-of-oz.txt", cover: "covers/wizard-of-oz.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "k8", title: "Anne of Green Gables", author: "L. M. Montgomery", bundled: true, file: "books/anne-of-green-gables.txt", cover: "covers/anne-of-green-gables.jpg", source: "Project Gutenberg", license: "Public domain" },
     ],
   },
   {
@@ -75,10 +85,12 @@ export const categories = [
     description: "Character-building stories that teach honesty, kindness, and patience.",
     descriptionUrdu: "ایسی کہانیاں جو دیانت، مہربانی اور صبر سکھاتی ہیں۔",
     books: [
-      { id: "m1", title: "The Honest Woodcutter", author: "Placeholder Author", bundled: true },
-      { id: "m2", title: "Sach Bolne Wala Larka", author: "Placeholder Author", bundled: true },
-      { id: "m3", title: "The Ant and the Grasshopper", author: "Placeholder Author", bundled: true },
-      { id: "m4", title: "Patience of the Turtle", author: "Placeholder Author", sizeMb: 2 },
+      { id: "m1", title: "Grimm's Fairy Tales", author: "Jacob Grimm", bundled: true, file: "books/grimm-fairy-tales.txt", cover: "covers/grimm-fairy-tales.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "m2", title: "Andersen's Fairy Tales", author: "Hans Christian Andersen", bundled: true, file: "books/andersen-fairy-tales.txt", cover: "covers/andersen-fairy-tales.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "m3", title: "The Blue Fairy Book", author: "Andrew Lang", bundled: true, file: "books/blue-fairy-book.txt", cover: "covers/blue-fairy-book.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "m4", title: "East of the Sun and West of the Moon", author: "Peter Christen Asbjørnsen", bundled: true, file: "books/east-of-the-sun.txt", cover: "covers/east-of-the-sun.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "m5", title: "Aesop's Fables", author: "Aesop", bundled: true, file: "books/aesop-fables.txt", cover: "covers/aesop-fables.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "m6", title: "A Christmas Carol", author: "Charles Dickens", bundled: true, file: "books/a-christmas-carol.txt", cover: "covers/a-christmas-carol.jpg", source: "Project Gutenberg", license: "Public domain" },
     ],
   },
   {
@@ -128,8 +140,20 @@ export const categories = [
           "سنہرے پھولوں کا ایک لشکر؛",
         ],
       },
-      { id: "p3", title: "Lab Pe Aati Hai Dua", author: "Allama Iqbal", sizeMb: 1 },
-      { id: "p4", title: "The Road Not Taken", author: "Robert Frost", urduTitle: "وہ راستہ جو نہ چنا گیا", sizeMb: 1 },
+      { id: "p3", title: "Lab Pe Aati Hai Dua", urduTitle: "لب پہ آتی ہے دعا", author: "Allama Iqbal", bundled: true, urdu: true, file: "books/lab-pe-dua.txt", source: "Urdu Wikisource", license: "Public domain" },
+      { id: "p4", title: "The Road Not Taken", author: "Robert Frost", bundled: true, file: "books/road-not-taken.txt", cover: "covers/road-not-taken.jpg", source: "English Wikisource", license: "Public domain" },
+      {
+        id: "p5",
+        title: "Diwan-e-Ghalib",
+        urduTitle: "دیوانِ غالب",
+        author: "Mirza Ghalib",
+        bundled: true,
+        file: "books/diwan-e-ghalib.txt",
+        cover: "covers/diwan-e-ghalib.jpg",
+        source: "Urdu Wikisource",
+        license: "Public domain",
+        urdu: true,
+      },
     ],
   },
   {
@@ -141,9 +165,9 @@ export const categories = [
     description: "Short animated / narrated stories with motion and simple visuals.",
     descriptionUrdu: "مختصر اینیمیٹڈ کہانیاں، سادہ تصاویر اور حرکت کے ساتھ۔",
     books: [
-      { id: "a1", title: "The Dancing Peacock", author: "Placeholder Studio", sizeMb: 8 },
-      { id: "a2", title: "Sindbad's First Voyage", author: "Placeholder Studio", sizeMb: 10 },
-      { id: "a3", title: "Neki Ka Phal", author: "Placeholder Studio", sizeMb: 6 },
+      { id: "a1", title: "The Tale of Peter Rabbit", author: "Beatrix Potter", bundled: true, file: "books/peter-rabbit.txt", cover: "covers/peter-rabbit.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "a2", title: "Just So Stories", author: "Rudyard Kipling", bundled: true, file: "books/just-so-stories.txt", cover: "covers/just-so-stories.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "a3", title: "The Velveteen Rabbit", author: "Margery Williams Bianco", bundled: true, file: "books/velveteen-rabbit.txt", cover: "covers/velveteen-rabbit.jpg", source: "Project Gutenberg", license: "Public domain" },
     ],
   },
   {
@@ -155,10 +179,10 @@ export const categories = [
     description: "General knowledge, current affairs basics, quizzes, and fun-fact books.",
     descriptionUrdu: "عمومی معلومات، حالات حاضرہ، کوئز اور دلچسپ حقائق پر مبنی کتابیں۔",
     books: [
-      { id: "g1", title: "World Capitals for Students", author: "Placeholder Author", bundled: true },
-      { id: "g2", title: "Pakistan Studies Quick Facts", author: "Placeholder Author", bundled: true },
-      { id: "g3", title: "100 Fun Science Facts", author: "Placeholder Author", sizeMb: 2 },
-      { id: "g4", title: "General Knowledge Quiz Book", author: "Placeholder Author", sizeMb: 2 },
+      { id: "g1", title: "The Story of Mankind", author: "Hendrik Willem van Loon", bundled: true, file: "books/story-of-mankind.txt", cover: "covers/story-of-mankind.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "g2", title: "A Popular History of Astronomy During the Nineteenth Century", author: "Agnes M. Clerke", bundled: true, file: "books/popular-astronomy.txt", cover: "covers/popular-astronomy.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "g3", title: "The Outline of Science, Vol. 1", author: "J. Arthur Thomson", bundled: true, file: "books/outline-of-science.txt", cover: "covers/outline-of-science.jpg", source: "Project Gutenberg", license: "Public domain" },
+      { id: "g4", title: "Cosmos, Vol. 1", author: "Alexander von Humboldt", bundled: true, file: "books/cosmos-humboldt.txt", cover: "covers/cosmos-humboldt.jpg", source: "Project Gutenberg", license: "Public domain" },
     ],
   },
 ];

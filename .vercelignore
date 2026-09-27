@@ -1,0 +1,14 @@
+# Vercel upload excludes — keeps the deployment lean and keeps local data out.
+.vercel
+.next
+node_modules
+.git
+data
+*.db
+*.db-shm
+*.db-wal
+scripts
+coverage
+*.log
+.env*
+next-env.d.ts

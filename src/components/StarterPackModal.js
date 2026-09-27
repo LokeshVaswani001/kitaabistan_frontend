@@ -66,7 +66,7 @@ export default function StarterPackModal({ onDone }) {
         <button
           disabled={!done}
           onClick={onDone}
-          className="mt-5 w-full py-3 rounded-xl bg-[var(--ink)] text-white font-bold disabled:opacity-40"
+          className="mt-5 w-full py-3 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-bold disabled:opacity-40"
         >
           {isUrdu ? "جاری رکھیں" : "Continue"}
         </button>

@@ -1,0 +1,186 @@
+{
+  "heroSubtitle": {
+    "en": "A free bilingual library and a chatbot that works without internet. For students who don't always have data, but always need something worth reading.",
+    "ur": "مفت دو زبانی لائبریری اور ایسا چیٹ بوٹ جو انٹرنیٹ کے بغیر بھی چلتا ہے۔ ان طلباء کے لیے جن کے پاس ہمیشہ ڈیٹا نہیں ہوتا، مگر کچھ پڑھنے لائق ہمیشہ چاہیے ہوتا ہے۔"
+  },
+  "demoDisclaimer": {
+    "en": "Look around the library without an account. Sign up whenever you like to keep what you've read.",
+    "ur": "بغیر اکاؤنٹ کے لائبریری دیکھیں۔ جو پڑھ لیا ہے محفوظ رکھنے کے لیے جب چاہیں سائن اپ کر لیں۔"
+  },
+  "demoSubtitle": {
+    "en": "Pick how long you want to look around. No account, no personal details. When the time is up, sign up and pick up where you left off.",
+    "ur": "منتخب کریں کہ کتنی دیر دیکھنا چاہتے ہیں۔ نہ اکاؤنٹ، نہ ذاتی معلومات۔ وقت ختم ہونے پر سائن اپ کر کے وہیں سے آگے پڑھیں۔"
+  },
+  "signupKeepsProgress": {
+    "en": "Sign up and your reading history stays with you. The demo timer stops once you have an account.",
+    "ur": "سائن اپ کریں تاکہ آپ کی پڑھنے کی تاریخ محفوظ رہے۔ اکاؤنٹ بننے کے بعد ڈیمو ٹائمر رک جاتا ہے۔"
+  },
+  "demoEndedBanner": {
+    "en": "Your demo is over (or you never started one). Log in, sign up, or start a new one.",
+    "ur": "آپ کا ڈیمو ختم ہو گیا (یا شروع ہی نہیں ہوا)۔ لاگ ان کریں، سائن اپ کریں یا نیا شروع کریں۔"
+  },
+  "librarySubtitle": {
+    "en": "Eight shelves. Download one and you can read it without internet.",
+    "ur": "آٹھ شیلفیں۔ ایک ڈاؤن لوڈ کر لیں، پھر انٹرنیٹ کے بغیر بھی پڑھ سکتے ہیں۔"
+  },
+  "chatbotSubtitle": {
+    "en": "Works offline · replies from approved books and the ones you saved",
+    "ur": "بغیر انٹرنیٹ · منظور شدہ کتابیں اور آپ کی محفوظ کتابیں"
+  },
+  "chatbotSeed": {
+    "en": "Hi, I'm Rehnuma. I answer from the books and Q&A your teacher or the app's founder added, and from anything you've saved yourself. Ask me something from your library!",
+    "ur": "السلام علیکم! میں رہنما ہوں۔ جو کتابیں اور سوالات آپ کے استاد یا ایپ کے بنائی نے شامل کیے ہیں ان سے جواب دیتی ہوں، اور آپ کی خود محفوظ کتابوں سے بھی۔ اپنی لائبریری سے کچھ پوچھیے!"
+  },
+  "chatbotIntroTitle": {
+    "en": "Answers straight from the books.",
+    "ur": "جواب سیدھا کتابوں سے۔"
+  },
+  "chatbotSectionTitle": {
+    "en": "Answers straight from the books.",
+    "ur": "جواب سیدھا کتابوں سے۔"
+  },
+  "chatbotIntroBody": {
+    "en": "Rehnuma only answers from the books it has been given, so it doesn't make anything up. It also works with no internet.",
+    "ur": "رہنما صرف اُن کتابوں سے جواب دیتی ہے جو اسے دی گئی ہیں، اس لیے کچھ بھی گھڑ نہیں بناتی۔ انٹرنیٹ کے بغیر بھی چلتی ہے۔"
+  },
+  "chatbotSectionBody": {
+    "en": "Rehnuma only answers from the books it has been given, so it doesn't make anything up. It also works with no internet.",
+    "ur": "رہنما صرف اُن کتابوں سے جواب دیتی ہے جو اسے دی گئی ہیں، اس لیے کچھ بھی گھڑ نہیں بناتی۔ انٹرنیٹ کے بغیر بھی چلتی ہے۔"
+  },
+  "chatbotChipCurated": {
+    "en": "Only from approved books",
+    "ur": "صرف منظور شدہ کتابیں"
+  },
+  "chatbotChipFeedback": {
+    "en": "Tell us how it did",
+    "ur": "بتائیں کیسی لگی"
+  },
+  "chatbotVerified": {
+    "en": "From approved books",
+    "ur": "منظور شدہ کتابوں سے"
+  },
+  "chatbotMore": {
+    "en": "Ask another",
+    "ur": "کچھ اور پوچھیں"
+  },
+  "keepProgressBody": {
+    "en": "Sign up any time and your bookmarks and reading history will still be there after the demo.",
+    "ur": "جب چاہیں سائن اپ کر لیں، آپ کے بک مارکس اور پڑھنے کی تاریخ ڈیمو کے بعد بھی موجود رہیں گے۔"
+  },
+  "statLanguages": {
+    "en": "Both languages, side by side",
+    "ur": "دونوں زبانیں، ساتھ ساتھ"
+  },
+  "statFree": {
+    "en": "Free to read, always",
+    "ur": "ہمیشہ پڑھنے کے لیے مفت"
+  },
+  "shelvesTitle": {
+    "en": "Eight shelves. No internet needed.",
+    "ur": "آٹھ شیلفیں۔ انٹرنیٹ کی ضرورت نہیں۔"
+  },
+  "poemsTitle": {
+    "en": "Read a poem the way it was written, with the Urdu right beside it.",
+    "ur": "نظم اسی طرح پڑھیں جیسے لکھی گئی تھی، اردو بالکل ساتھ۔"
+  },
+  "footerTagline": {
+    "en": "Free for students. Reads fine without the internet.",
+    "ur": "طلباء کے لیے مفت۔ انٹرنیٹ کے بغیر بھی آرام سے پڑھیں۔"
+  },
+  "authPanelEyebrow": {
+    "en": "Reading without the internet",
+    "ur": "بغیر انٹرنیٹ پڑھنا"
+  },
+  "authPanelBody": {
+    "en": "Download a shelf once and it's yours to keep: bilingual books, answers you can trust, and a reading streak that follows you across devices.",
+    "ur": "ایک بار شیلف ڈاؤن لوڈ کر لیں اور وہ ہمیشہ آپ کی: دو زبانی کتابیں، قابلِ بھروسہ جواب، اور سٹریک جو ہر ڈیوائس پر ساتھ چلتی ہے۔"
+  },
+  "featuresTitle": {
+    "en": "What you need to read. Nothing you don't.",
+    "ur": "پڑھنے والے کو جو چاہیے، بس وہی۔"
+  },
+  "featureOfflineT": {
+    "en": "Read without internet",
+    "ur": "انٹرنیٹ کے بغیر پڑھیں"
+  },
+  "featureOfflineB": {
+    "en": "Download a shelf once and every book on it opens offline: on the bus, in a village, anywhere.",
+    "ur": "شیلف ایک بار ڈاؤن لوڈ کریں، پھر اُس کی ہر کتاب بس میں، گاؤں میں، کہیں بھی بغیر انٹرنیٹ کھلے گی۔"
+  },
+  "featureChatbotT": {
+    "en": "A chatbot that doesn't make things up",
+    "ur": "ایسا چیٹ بوٹ جو باتیں نہیں گھڑتا"
+  },
+  "featureChatbotB": {
+    "en": "Rehnuma answers only from approved books or the ones you saved, and tells you plainly when it doesn't know.",
+    "ur": "رہنما صرف منظور شدہ کتابیں یا آپ کی محفوظ کتابوں سے جواب دیتی ہے، اور نہ جانے پر صاف کہ دیتی ہے۔"
+  },
+  "featureStreakB": {
+    "en": "See your daily streak, earn badges, and keep the habit going.",
+    "ur": "اپنی روزانہ سٹریک دیکھیں، بیجز جیتیں، اور عادت کو زندہ رکھیں۔"
+  },
+  "featureFreeB": {
+    "en": "No subscriptions, no locked chapters. The whole library stays open to students.",
+    "ur": "نہ سبسکرپشن، نہ بند باب۔ پوری لائبریری طلباء کے لیے کھلی ہے۔"
+  },
+  "featureKidsB": {
+    "en": "One switch hides the older shelves, so younger readers stay on the right books.",
+    "ur": "ایک سوئچ سے بڑوں والی شیلفیں چھپ جاتی ہیں تاکہ چھوٹے صرف مناسب کتابیں پڑھیں۔"
+  },
+  "howTitle": {
+    "en": "Three steps and you're reading.",
+    "ur": "تین قدم اور آپ پڑھنے لگیں۔"
+  },
+  "howStep1B": {
+    "en": "Name, email, password. About ten seconds, no card, no verification dance.",
+    "ur": "نام، ای میل، پاس ورڈ۔ دس سیکنڈ میں، نہ کارڈ، نہ تصدیق کا جھنجھٹ۔"
+  },
+  "howStep3B": {
+    "en": "Save a book once and it stays readable offline. Your progress follows your account.",
+    "ur": "کتاب ایک بار محفوظ کریں، پھر بغیر انٹرنیٹ پڑھیں۔ پیش رفت آپ کے اکاؤنٹ کے ساتھ رہتی ہے۔"
+  },
+  "testimonialsTitle": {
+    "en": "What readers say.",
+    "ur": "پڑھنے والوں کی زبانی۔"
+  },
+  "ctaTitle": {
+    "en": "Open a book tonight.",
+    "ur": "آج رات ایک کتاب کھولیں۔"
+  },
+  "ctaBody": {
+    "en": "Make a free account and your bookmarks, streak and progress stay with you on every device.",
+    "ur": "مفت اکاؤنٹ بنائیں، آپ کے بک مارکس، سٹریک اور پیش رفت ہر ڈیوائس پر ساتھ رہیں گے۔"
+  },
+  "signupPanelTitle": {
+    "en": "Your books follow you.",
+    "ur": "آپ کی کتابیں ساتھ چلتی ہیں۔"
+  },
+  "signupPanelBody": {
+    "en": "An account keeps your bookmarks, streak and progress on every device you use.",
+    "ur": "اکاؤنٹ سے آپ کے بک مارکس، سٹریک اور پیش رفت ہر استعمال شدہ ڈیوائس پر محفوظ رہتی ہے۔"
+  },
+  "obBotBody": {
+    "en": "A chatbot that only answers from approved books, and works with no internet.",
+    "ur": "ایسا چیٹ بوٹ جو صرف منظور شدہ کتابوں سے جواب دیتا ہے، اور انٹرنیٹ کے بغیر بھی چلتا ہے۔"
+  },
+  "obNameBody": {
+    "en": "No personal details needed. This just sets up your shelves and reading level.",
+    "ur": "کوئی ذاتی معلومات درکار نہیں۔ یہ صرف آپ کی شیلفیں اور پڑھنے کی سطح طے کرتا ہے۔"
+  },
+  "heroNote": {
+    "en": "No card, no app store. Just open it and start reading.",
+    "ur": "نہ کارڈ، نہ ایپ اسٹور۔ بس کھولیں اور پڑھنا شروع کر دیں۔"
+  },
+  "privacyIntro": {
+    "en": "Kitaabistan is made for students, so we kept this simple. No legal jargon.",
+    "ur": "کتابستان طلباء کے لیے بنا ہے، اس لیے یہ وضاحت سادہ رکھی ہے۔ کوئی قانونی لفاظ نہیں۔"
+  },
+  "createFreeAccount": {
+    "en": "Create a free account",
+    "ur": "مفت اکاؤنٹ بنائیں"
+  },
+  "offlineBanner": {
+    "en": "You're offline. Downloaded books and the chatbot still work.",
+    "ur": "آپ آف لائن ہیں۔ ڈاؤن لوڈ کی گئی کتابیں اور چیٹ بوٹ اب بھی کام کرتے ہیں۔"
+  }
+}

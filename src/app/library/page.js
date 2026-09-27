@@ -82,6 +82,63 @@ function LibraryContent() {
         )}
       </form>
 
+      {!results && (
+        <Link
+          href="/poems"
+          className="mt-4 flex items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--panel)] px-5 py-4 hover:border-[var(--brand)] transition-colors"
+        >
+          <div className="min-w-0">
+            <div className={`font-extrabold text-sm text-[var(--ink)] ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu ? "بچوں کے کارٹون پوئم ویڈیوز" : "Cartoon poem videos"}
+            </div>
+            <div className={`text-xs text-[var(--ink-soft)] mt-0.5 ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu
+                ? "اردو اور انگریزی نظمیں — متحرک مناظر اور آواز کے ساتھ"
+                : "Urdu and English poems with animated scenes and narration"}
+            </div>
+          </div>
+          <span className="text-2xl shrink-0">🎬</span>
+        </Link>
+      )}
+
+      {!results && (
+        <Link
+          href="/stories"
+          className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--panel)] px-5 py-4 hover:border-[var(--brand)] transition-colors"
+        >
+          <div className="min-w-0">
+            <div className={`font-extrabold text-sm text-[var(--ink)] ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu ? "بچوں کی متحرک کہانیاں" : "Animated stories"}
+            </div>
+            <div className={`text-xs text-[var(--ink-soft)] mt-0.5 ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu
+                ? "اردو اور انگریزی کہانیاں — مناظر، پہلو اور آواز کے ساتھ"
+                : "Urdu and English stories with scenes, characters and narration"}
+            </div>
+          </div>
+          <span className="text-2xl shrink-0">📖</span>
+        </Link>
+      )}
+
+      {!results && (
+        <Link
+          href="/import"
+          className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--panel)] px-5 py-4 hover:border-[var(--brand)] transition-colors"
+        >
+          <div className="min-w-0">
+            <div className={`font-extrabold text-sm text-[var(--ink)] ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu ? "اپنی کتابیں شامل کریں" : "Add your own books"}
+            </div>
+            <div className={`text-xs text-[var(--ink-soft)] mt-0.5 ${isUrdu ? "font-urdu" : ""}`}>
+              {isUrdu
+                ? "کوئی بھی کتاب لنک سے ڈاؤن لوڈ کریں یا فائل اپ لوڈ کریں — بغیر انٹرنیٹ کے"
+                : "Download any book from a link or upload a file — works offline"}
+            </div>
+          </div>
+          <span className="text-2xl shrink-0">📥</span>
+        </Link>
+      )}
+
       {results ? (
         <div className="mt-6">
           <div className="text-sm font-semibold text-[var(--ink-soft)] mb-4">
