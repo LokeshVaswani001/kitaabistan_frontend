@@ -5,7 +5,7 @@ const theme = process.argv[2] || "light";
 const only = process.argv[3];
 
 const ROUTES = [
-  "/", "/home", "/library", "/chatbot", "/profile", "/saved", "/import",
+  "/", "/?welcome=1", "/home", "/library", "/chatbot", "/profile", "/saved", "/import",
   "/poems", "/stories", "/login", "/signup", "/demo", "/onboarding",
   "/terms", "/privacy", "/book/n9",
 ];
@@ -25,7 +25,10 @@ const collect = () => {
   const out = [];
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  for (const el of document.querySelectorAll("body *")) {
+  // When a modal gate is open (e.g. /?welcome=1), only audit what is
+  // actually visible on top — everything behind the overlay is covered.
+  const root = document.querySelector('[role="dialog"][aria-modal="true"]') || document.body;
+  for (const el of root.querySelectorAll("*")) {
     const st = getComputedStyle(el);
     if (st.display === "none" || st.visibility === "hidden") continue;
     const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ").trim();
@@ -136,11 +139,11 @@ const analyse = ({ b64, els }) =>
   });
 
 (async () => {
-  const session = await getSession();
+  const session = process.env.NO_SESSION ? null : await getSession();
   const browser = await chromium.launch({ channel: "msedge", headless: true, args: ["--no-sandbox"] });
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 940 }, deviceScaleFactor: 1 });
   await ctx.addInitScript((t) => localStorage.setItem("kitaabistan_theme", t), theme);
-  await ctx.addCookies([{ name: "kitaabistan_session", value: session, url: BASE }]);
+  if (session) await ctx.addCookies([{ name: "kitaabistan_session", value: session, url: BASE }]);
   const page = await ctx.newPage();
 
   const seen = new Set();

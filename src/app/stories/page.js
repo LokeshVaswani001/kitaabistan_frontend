@@ -1,28 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, BookOpen } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import StoryPlayer from "@/components/story-player/StoryPlayer";
 import { STORY_VIDEOS } from "@/components/story-player/stories";
+import { SCENE_EMOJI, SCENE_STYLES } from "@/components/story-player/sceneStyles";
 import { useLanguage } from "@/context/LanguageContext";
-
-const SCENE_STYLES = {
-  meadow: "linear-gradient(160deg,#bfe6ff,#9ed39a)",
-  night: "linear-gradient(160deg,#0d1b3e,#2a3f7a)",
-  mountain: "linear-gradient(160deg,#bfe6ff,#3f8f74)",
-  mosque: "linear-gradient(160deg,#1c6a6a,#f2c46b)",
-  forest: "linear-gradient(160deg,#dff6e8,#2f7d5b)",
-  river: "linear-gradient(160deg,#aee0ff,#2f9ad0)",
-};
-
-const SCENE_EMOJI = { meadow: "🌼", night: "⭐", mountain: "⛰️", mosque: "🕌", forest: "🌲", river: "🏞️" };
 
 export default function StoriesPage() {
   const { isUrdu, t } = useLanguage();
   const [activeId, setActiveId] = useState(STORY_VIDEOS[0].id);
   const active = STORY_VIDEOS.find((s) => s.id === activeId) || STORY_VIDEOS[0];
+
+  /* Deep link: /stories?id=tortoise-hare opens that story straight away. */
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get("id");
+    if (wanted && STORY_VIDEOS.some((s) => s.id === wanted)) setActiveId(wanted);
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <AppShell>

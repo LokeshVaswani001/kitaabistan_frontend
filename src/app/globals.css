@@ -501,6 +501,113 @@ h4.font-urdu {
   animation: shimmer 1.6s linear infinite;
 }
 
+/* Waving kid mascot on the welcome gate — bouncy cartoon motion. */
+@keyframes kid-wave {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  40% {
+    transform: rotate(-52deg);
+  }
+  62% {
+    transform: rotate(-30deg);
+  }
+}
+
+@keyframes kid-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  45% {
+    transform: translateY(-9px) scale(0.97, 1.06);
+  }
+  80% {
+    transform: translateY(0) scale(1.05, 0.95);
+  }
+}
+
+@keyframes kid-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.16;
+  }
+  45% {
+    transform: scale(0.7);
+    opacity: 0.09;
+  }
+  80% {
+    transform: scale(1.12);
+    opacity: 0.19;
+  }
+}
+
+@keyframes kid-nod {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes kid-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes kid-zap {
+  0%,
+  30%,
+  100% {
+    opacity: 0;
+  }
+  45%,
+  75% {
+    opacity: 0.9;
+  }
+}
+
+.kid-body {
+  transform-origin: 60px 131px;
+  animation: kid-hop 1.6s ease-in-out infinite;
+}
+
+.kid-arm {
+  transform-origin: 76px 80px;
+  animation: kid-wave 0.95s ease-in-out infinite;
+}
+
+.kid-head {
+  transform-origin: 60px 64px;
+  animation: kid-nod 2.6s ease-in-out infinite;
+}
+
+.kid-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kid-blink 3.6s ease-in-out infinite;
+}
+
+.kid-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kid-shadow 1.6s ease-in-out infinite;
+}
+
+.kid-zap {
+  animation: kid-zap 0.95s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

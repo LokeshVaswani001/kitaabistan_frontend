@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Flame } from "lucide-react";
+import { ArrowRight, Award, BookOpen, Bookmark, Flame, MessageCircle, Play, Wifi } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import CategoryTile from "@/components/CategoryTile";
 import { visibleCategories, allBooks } from "@/lib/booksData";
+import { STORY_VIDEOS } from "@/components/story-player/stories";
+import { SCENE_EMOJI, SCENE_STYLES } from "@/components/story-player/sceneStyles";
 import { useAuth } from "@/context/AuthContext";
+import { useBookmarks } from "@/context/BookmarksContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useProfiles } from "@/context/ProfilesContext";
 import { useProgress } from "@/context/ProgressContext";
@@ -28,7 +31,8 @@ export default function HomePage() {
   const { t, isUrdu } = useLanguage();
   const { activeProfile } = useProfiles();
   const { progress } = useProgress();
-  const { streak } = useStreak();
+  const { streak, booksOpened, badges } = useStreak();
+  const { bookmarkIds } = useBookmarks();
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -47,6 +51,13 @@ export default function HomePage() {
   const firstName = session?.type === "member" ? session.name.split(" ")[0] : "Guest";
   const poems = categories.find((c) => c.slug === "poems");
 
+  const stats = [
+    { icon: Flame, n: streak, label: t("statStreak") },
+    { icon: BookOpen, n: booksOpened, label: t("statOpened") },
+    { icon: Bookmark, n: bookmarkIds.length, label: t("statSaved") },
+    { icon: Award, n: badges.length, label: t("statBadges") },
+  ];
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) router.push(`/library?q=${encodeURIComponent(query.trim())}`);
@@ -55,32 +66,49 @@ export default function HomePage() {
   return (
     <AppShell>
       <div className="max-w-5xl mx-auto px-5 md:px-10 pt-6 md:pt-10">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs text-[var(--ink-soft)] font-semibold">
-              {t("goodToSeeYou")}
+        {/* Welcome card — greeting plus the reader's real numbers */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-3xl bg-[var(--sage-deep)] text-[#F7F1E1] px-5 py-5 md:px-7 md:py-6"
+        >
+          <div className="pointer-events-none absolute -right-16 -top-24 w-64 h-64 rounded-full bg-[var(--brand)]/30 blur-3xl" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="text-xs font-semibold opacity-75">{t("goodToSeeYou")}</div>
+              <h1 className={`text-2xl md:text-3xl font-extrabold mt-1 ${isUrdu ? "font-urdu" : ""}`}>
+                {t("shelfOf", { name: firstName })}
+              </h1>
+              {activeProfile.kidsMode && (
+                <div className={`mt-2 text-[11px] font-bold text-[var(--sun)] ${isUrdu ? "font-urdu" : ""}`}>
+                  {isUrdu
+                    ? `${activeProfile.name} — کڈز موڈ فعال ہے`
+                    : `${activeProfile.name} — Kids Mode is on`}
+                </div>
+              )}
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold mt-1">
-              {t("shelfOf", { name: firstName })}
-            </h1>
+            <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-[11px] font-bold">
+              <Wifi size={13} />
+              {t("statOffline")}
+            </span>
           </div>
-          {streak > 0 && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="flex items-center gap-1.5 bg-[var(--sun)]/25 border border-[var(--sun)] rounded-full px-3 py-1.5"
-            >
-              <Flame size={14} color="#B8760E" />
-              <span className="text-xs font-extrabold">{streak}</span>
-            </motion.div>
-          )}
-        </div>
 
-        {activeProfile.kidsMode && (
-          <div className={`mt-3 text-[11px] font-bold text-[var(--sage-deep)] ${isUrdu ? "font-urdu" : ""}`}>
-            {isUrdu ? `${activeProfile.name} — کڈز موڈ فعال ہے` : `${activeProfile.name} — Kids Mode is on`}
+          <div className="relative mt-4 pt-4 border-t border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {stats.map(({ icon: Icon, n, label }) => (
+              <div key={label} className="flex items-center gap-2">
+                <span className="grid place-items-center w-8 h-8 rounded-lg bg-white/10 text-[var(--sun)] shrink-0">
+                  <Icon size={15} />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-extrabold leading-none">{n}</span>
+                  <span className={`block text-[11px] opacity-70 mt-1 truncate ${isUrdu ? "font-urdu" : ""}`}>
+                    {label}
+                  </span>
+                </span>
+              </div>
+            ))}
           </div>
-        )}
+        </motion.div>
 
         <form onSubmit={handleSearchSubmit}>
           <input
@@ -93,7 +121,7 @@ export default function HomePage() {
           />
         </form>
 
-        {continueBook && (
+        {continueBook ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
             <Link
               href={`/book/${continueBook.id}`}
@@ -116,6 +144,26 @@ export default function HomePage() {
               </motion.div>
             </Link>
           </motion.div>
+        ) : (
+          <Link
+            href="/chatbot"
+            className="mt-6 flex items-center gap-4 border border-[var(--line)] bg-[var(--panel)] rounded-2xl px-5 py-4 hover:border-[var(--brand)] transition-colors"
+          >
+            <span className="grid place-items-center w-11 h-11 rounded-xl bg-[var(--brand)]/15 text-[var(--brand)] shrink-0">
+              <MessageCircle size={20} />
+            </span>
+            <span className="min-w-0">
+              <span className="block font-extrabold text-sm">{t("obBotTitle")}</span>
+              <span
+                className={`block text-xs text-[var(--ink-soft)] mt-1 line-clamp-2 ${
+                  isUrdu ? "font-urdu" : ""
+                }`}
+              >
+                {t("obBotBody")}
+              </span>
+            </span>
+            <ArrowRight size={18} className="ml-auto shrink-0 text-[var(--ink-soft)]" />
+          </Link>
         )}
 
         <div className="mt-9">
@@ -169,6 +217,46 @@ export default function HomePage() {
             </motion.div>
           </div>
         )}
+
+        <div className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-xs font-bold text-[var(--ink-soft)]">{t("homeStories")}</div>
+            <Link href="/stories" className="text-xs font-bold">
+              {t("seeAll")}
+            </Link>
+          </div>
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="flex gap-3 overflow-x-auto pb-2"
+          >
+            {STORY_VIDEOS.map((s) => (
+              <motion.div variants={item} key={s.id}>
+                <Link
+                  href={`/stories?id=${s.id}`}
+                  className="block w-40 shrink-0 bg-[var(--panel)] border border-[var(--line)] rounded-xl overflow-hidden hover:border-[var(--brand)] transition-colors"
+                >
+                  <div
+                    className="h-24 relative flex items-center justify-center text-3xl bg-[var(--line)]"
+                    style={{ background: SCENE_STYLES[s.scene] }}
+                  >
+                    <span className="drop-shadow">{SCENE_EMOJI[s.scene] || "📖"}</span>
+                    <span className="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-white/90 text-[#10201c] flex items-center justify-center">
+                      <Play size={13} fill="currentColor" />
+                    </span>
+                  </div>
+                  <div className="p-2.5">
+                    <div className="text-xs font-bold leading-snug">{s.title}</div>
+                    <div className="text-[11px] text-[var(--ink-soft)] mt-0.5 truncate">
+                      {s.author} · {s.minutes} min
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </AppShell>
   );

@@ -46,7 +46,7 @@ async function ask(page, text) {
   await page.goto(`${BASE}/chatbot`, { waitUntil: "networkidle", timeout: 60000 });
   await page.waitForTimeout(800);
 
-  const switcher = page.locator("button[aria-label='Change language']");
+  const switcher = page.locator("header button[aria-label='Change language']");
   ok("switcher visible on chatbot", await switcher.isVisible());
   await switcher.click();
   await page.waitForTimeout(300);

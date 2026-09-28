@@ -8,6 +8,7 @@ import { Home, Library, MessageCircle, Bookmark, User, WifiOff, BookPlus } from 
 import { useAuth, formatRemaining } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Footer from "@/components/Footer";
 
 function useTabs(t) {
   return [
@@ -208,11 +209,14 @@ export default function AppShell({ children }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="flex-1 pb-24 md:pb-10"
+          className={`flex-1 md:pb-10 ${pathname.startsWith("/book/") ? "pb-24" : ""}`}
         >
           {children}
         </motion.main>
       </AnimatePresence>
+
+      {/* Reader pages stay immersive; every other page gets the site footer. */}
+      {!pathname.startsWith("/book/") && <Footer app />}
 
       {/* Bottom tab bar — mobile only */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--panel)] border-t border-[var(--line)] flex pt-2 pb-3 z-20">

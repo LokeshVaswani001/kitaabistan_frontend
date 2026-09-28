@@ -7,7 +7,6 @@ import * as Icons from "lucide-react";
 import {
   ArrowRight,
   BadgeCheck,
-  BarChart3,
   BookOpen,
   Bookmark,
   Check,
@@ -26,6 +25,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { categories } from "@/lib/booksData";
 import ThemeToggle, { LangToggle } from "@/components/ThemeToggle";
+import Footer from "@/components/Footer";
+import WelcomeGate from "@/components/WelcomeGate";
 
 /* ------------------------------------------------------------------ motion */
 
@@ -559,6 +560,82 @@ function SplitShowcase() {
   );
 }
 
+/* ------------------------------------------------------------ screenshots */
+
+const SHOTS = [
+  { src: "/screenshots/home.png", title: "shotHomeT", body: "shotHomeB" },
+  { src: "/screenshots/library.png", title: "shotLibraryT", body: "shotLibraryB" },
+  { src: "/screenshots/chatbot.png", title: "shotChatT", body: "shotChatB" },
+  { src: "/screenshots/languages.png", title: "shotLangT", body: "shotLangB" },
+  { src: "/screenshots/add-books.png", title: "shotAddT", body: "shotAddB" },
+  { src: "/screenshots/animated-books.png", title: "shotAnimatedT", body: "shotAnimatedB" },
+];
+
+function Screenshots() {
+  const { t, isUrdu } = useLanguage();
+
+  return (
+    <Section id="screens" className="mx-auto max-w-6xl px-5 md:px-8 py-20 md:py-28">
+      <Eyebrow>{t("shotsLabel")}</Eyebrow>
+      <motion.h2
+        variants={reveal}
+        className={`mt-4 text-3xl md:text-[2.6rem] leading-tight font-extrabold tracking-tight max-w-2xl ${
+          isUrdu ? "font-urdu tracking-normal" : ""
+        }`}
+      >
+        {t("shotsTitle")}
+      </motion.h2>
+      <motion.p
+        variants={reveal}
+        className={`mt-4 max-w-2xl text-base leading-relaxed text-ink-soft ${isUrdu ? "font-urdu" : ""}`}
+      >
+        {t("shotsBody")}
+      </motion.p>
+
+      <div className="mt-8 md:mt-10">
+        {SHOTS.map((shot, i) => (
+          <motion.figure
+            key={shot.src}
+            variants={reveal}
+            className={`grid md:grid-cols-2 gap-6 md:gap-12 items-center py-8 md:py-10 ${
+              i ? "border-t border-line" : ""
+            }`}
+          >
+            <figcaption className={`max-w-lg ${i % 2 ? "md:order-2" : ""}`}>
+              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-brand">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3
+                className={`mt-2 text-xl md:text-2xl font-extrabold tracking-tight ${
+                  isUrdu ? "font-urdu tracking-normal" : ""
+                }`}
+              >
+                {t(shot.title)}
+              </h3>
+              <p className={`mt-3 text-[15px] leading-relaxed text-ink-soft ${isUrdu ? "font-urdu" : ""}`}>
+                {t(shot.body)}
+              </p>
+            </figcaption>
+
+            <div
+              className={`flex justify-center ${i % 2 ? "md:order-1 md:justify-start" : "md:justify-end"}`}
+            >
+              <img
+                src={shot.src}
+                alt={t(shot.title)}
+                width={441}
+                height={914}
+                loading="lazy"
+                className="w-[64%] sm:w-[46%] md:w-[236px] lg:w-[252px] h-auto rounded-2xl drop-shadow-[0_10px_22px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out will-change-transform hover:-translate-y-2 hover:scale-[1.04] hover:drop-shadow-[0_26px_44px_rgba(0,0,0,0.38)]"
+              />
+            </div>
+          </motion.figure>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 /* ------------------------------------------------------------- how it works */
 
 const STEPS = [
@@ -713,104 +790,19 @@ function FinalCta() {
 
 /* ------------------------------------------------------------------ footer */
 
-function Footer() {
-  const { t, isUrdu } = useLanguage();
-
-  const columns = [
-    {
-      title: t("footerProduct"),
-      links: [
-        { label: t("navFeatures"), href: "#features" },
-        { label: t("libraryTitle"), href: "/library" },
-        { label: t("chatbotName"), href: "/chatbot" },
-        { label: t("footerDemo"), href: "/demo" },
-      ],
-    },
-    {
-      title: t("footerResources"),
-      links: [
-        { label: t("navHow"), href: "#how" },
-        { label: t("browseLib"), href: "/library" },
-        { label: isUrdu ? "پہلی بار ہیں؟" : "First time here?", href: "/onboarding" },
-      ],
-    },
-    {
-      title: isUrdu ? "قانونی" : "Legal",
-      links: [
-        { label: t("footerPrivacyLabel"), href: "/privacy" },
-        { label: t("footerTermsLabel"), href: "/terms" },
-      ],
-    },
-  ];
-
-  return (
-    <footer className="border-t border-line bg-panel/50">
-      <div className="mx-auto max-w-6xl px-5 md:px-8 py-14">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <span className="grid place-items-center w-9 h-9 rounded-xl bg-brand text-on-brand font-extrabold text-sm">
-                {t("appName").slice(0, 1)}
-              </span>
-              <span className="font-extrabold text-lg tracking-tight">{t("appName")}</span>
-            </div>
-            <p className={`mt-4 text-sm text-ink-soft max-w-xs leading-relaxed ${isUrdu ? "font-urdu" : ""}`}>
-              {t("footerTagline")}
-            </p>
-            <div className="mt-5 flex items-center gap-2">
-              <LangToggle />
-              <ThemeToggle />
-            </div>
-          </div>
-
-          {columns.map((col) => (
-            <div key={col.title}>
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-ink-soft">{col.title}</div>
-              <ul className="mt-4 space-y-2.5">
-                {col.links.map((link) => {
-                  const className = `text-sm font-semibold text-ink-soft hover:text-brand transition-colors ${
-                    isUrdu ? "font-urdu" : ""
-                  }`;
-                  return link.href.startsWith("#") ? (
-                    <a key={link.label} href={link.href} className={className}>
-                      {link.label}
-                    </a>
-                  ) : (
-                    <Link key={link.label} href={link.href} className={className}>
-                      {link.label}
-                    </Link>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 pt-6 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className={`text-xs text-ink-soft ${isUrdu ? "font-urdu" : ""}`}>
-            © 2026 {t("appName")}. {t("footerRights")}
-          </p>
-          <p className="flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
-            <BarChart3 size={13} className="text-brand" />
-            {t("footerTagline")}
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 /* -------------------------------------------------------------------- page */
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-paper overflow-x-hidden">
+      <WelcomeGate />
       <Header />
       <main>
         <Hero />
         <Features />
         <Shelves />
         <SplitShowcase />
+        <Screenshots />
         <HowItWorks />
         <Testimonials />
         <FinalCta />

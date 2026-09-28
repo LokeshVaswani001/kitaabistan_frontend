@@ -128,7 +128,7 @@ export default function ProfilePage() {
       color: "#B8760E",
       tint: "rgba(245,179,1,0.16)",
       value: streak,
-      label: isUrdu ? "دن کا سلسلہ" : "Day streak",
+      label: t("statStreak"),
     },
     {
       key: "books",
@@ -136,7 +136,7 @@ export default function ProfilePage() {
       color: "var(--brand)",
       tint: "var(--brand-soft)",
       value: booksOpened,
-      label: isUrdu ? "کتابیں کھولیں" : "Books opened",
+      label: t("statOpened"),
     },
     {
       key: "saved",
@@ -144,7 +144,7 @@ export default function ProfilePage() {
       color: "var(--sage-deep)",
       tint: "var(--brand-soft)",
       value: bookmarkIds.length,
-      label: isUrdu ? "محفوظ کتابیں" : "Saved books",
+      label: t("statSaved"),
     },
     {
       key: "badges",
@@ -152,7 +152,7 @@ export default function ProfilePage() {
       color: "var(--accent)",
       tint: "var(--accent-soft)",
       value: badges.length,
-      label: isUrdu ? "بیج" : "Badges",
+      label: t("statBadges"),
     },
   ];
 

@@ -38,6 +38,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# raw screenshot exports (duplicates of public/screenshots)
+/mobile-iPhone*.png
+
 # local sqlite database + WAL sidecars
 /data/
 *.db
